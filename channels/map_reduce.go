@@ -49,3 +49,4 @@ func sumChannels(inputs []chan int64) int64 {
 	fmt.Printf("return: %v\n", vv)
 	return vv
 }
+

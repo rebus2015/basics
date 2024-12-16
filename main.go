@@ -20,8 +20,8 @@ func main() {
 	//v := Abs(3)
 	//fmt.Println(v)
 	//fmt.Println(reverse([]int{1,2,3,7}))
-	toFrequencyMapAsync("Pipa pip pum pam pum pi pppap pim pup pip pi pi")
-
+	//toFrequencyMapAsync("Pipa pip pum pam pum pi pppap pim pup pip pi pi")
+	StructChanProducer()
 	// mapKeyIntersect(map[int]struct{}{1: {}, 2: {}, 3: {}},
 	// 	map[int]struct{}{2: {}, 4: {}, 6: {}})
 	// toFrequencyMap([]string{"a", "b", "a"})
@@ -48,6 +48,42 @@ func main() {
 	// fmt.Printf("Delete result: %v\n", l.Delete("ERT"))
 	// fmt.Println()
 	// l.Print()
+
+}
+
+type MyStruct struct {
+	A *int
+	B int
+}
+
+func StructChanProducer() {
+	in := make(chan MyStruct)
+	out := make(chan MyStruct, 10)
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+	w1 := func(wg *sync.WaitGroup, channel chan<- MyStruct) {
+		defer wg.Done()
+		fmt.Println("Producer")
+		l1 := 100
+		s1 := MyStruct{&l1, 101}
+		fmt.Println(s1)
+		channel <- s1
+	}
+	//wg.Add(1)
+	w2 := func(wg *sync.WaitGroup, channel <-chan MyStruct, myChan chan<- MyStruct) {
+		defer wg.Done()
+		fmt.Println("Consumer")
+		s1 := <-channel
+
+		*s1.A += 11
+		myChan <- s1
+	}
+	go w1(&wg, in)
+	go w2(&wg, in, out)
+	wg.Wait()
+	s2 := <-out
+	fmt.Println(s2)
 
 }
 
@@ -155,10 +191,9 @@ func toFrequencyMapAsync(data string) map[string]int {
 	wg := sync.WaitGroup{}
 	s1 := s[:len(s)/2]
 	s2 := s[len(s)/2:]
-for i:=0;i<len(s);i+=2{
-	
-}
+	for i := 0; i < len(s); i += 2 {
 
+	}
 
 	wg.Add(1)
 	go func(str []string) {
